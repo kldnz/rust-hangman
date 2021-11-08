@@ -1,12 +1,9 @@
 extern crate rand;
-use rand::Rng;
-
-use std::fs::File;
-use std::io::prelude::*;
+extern crate reqwest;
 
 use std::io;
 
-const ALLOWED_ATTEMPTS: u8 = 5;
+const ALLOWED_ATTEMPTS: u8 = 10;
 
 struct Letter {
     character: char,
@@ -60,7 +57,7 @@ fn main() {
                 break;
             }
             GameProgress::Lost => {
-                println!("\nSorry, you lost ;(");
+                println!("\nSorry, you lost, the word was {}", selected_word);
                 break;
             }
         }
@@ -71,21 +68,16 @@ fn main() {
 }
 
 fn select_word() -> String {
-    /* Open file */
-    let mut file = File::open("words.txt").expect("Could not open file!");
+    let response_text = reqwest::get("https://random-word-api.herokuapp.com/word?number=1")
+        .expect("Coudn't make request")
+        .text().expect("Could not read response text");
 
-    // Load file contents
-    let mut file_contents = String::new();
-    file.read_to_string(&mut file_contents)
-        .expect("Ane error has occured while reading the file");
+    let response = response_text.replace('"', "");
+    let response = response.replace('[', "");
+    let response = response.replace(']', "");
 
-    // get individual words
-    let available_words: Vec<&str> = file_contents.trim().split(',').collect();
+    return String::from(response);
 
-    // generate random index
-    let random_index = rand::thread_rng().gen_range(0, available_words.len());
-
-    return String::from(available_words[random_index]);
 }
 
 fn create_letters(word: &String) -> Vec<Letter> {
