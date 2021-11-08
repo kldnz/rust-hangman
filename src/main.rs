@@ -65,7 +65,6 @@ fn main() {
 
     }
 
-    
     println!("Selected word was {}", selected_word);
 }
 
