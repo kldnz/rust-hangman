@@ -24,11 +24,13 @@ fn main() {
     let selected_word = select_word();
     let mut letters = create_letters(&selected_word);
 
+    println!("Welcome to Hangman game!");
+
     loop {
-        println!("You have {} turns left", turns_left);
+        println!("\nYou have {} turns left", turns_left);
         display_progress(&letters);
 
-        println!("Please enter a letter to guess: ");
+        println!("\nPlease enter a letter to guess: ");
         let user_char = read_user_input_character();
 
         // Exit if user enters an sterisk '*'
@@ -65,7 +67,7 @@ fn main() {
 
     }
 
-    println!("Selected word was {}", selected_word);
+    println!("\nGoodbye");
 }
 
 fn select_word() -> String {
