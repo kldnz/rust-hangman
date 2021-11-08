@@ -16,4 +16,4 @@ To play the game
 
 # TODO
 
-Update the code to get a random word and not from a file
+:white_check_mark: Update the code to get a random word and not from a file
