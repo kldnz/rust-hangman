@@ -4,16 +4,49 @@ use rand::Rng;
 use std::fs::File;
 use std::io::prelude::*;
 
+use std::io;
+
+const ALLOWED_ATTEMPTS: u8 = 5;
+
 struct Letter {
     character: char,
     revealed: bool
 }
 
 fn main() {
+    let mut turns_left = ALLOWED_ATTEMPTS;
     let selected_word = select_word();
     let mut letters = create_letters(&selected_word);
 
-    display_progress(&letters);
+    loop {
+        println!("You have {} turns left", turns_left);
+        display_progress(&letters);
+
+        println!("Please enter a letter to guess: ");
+        let user_char = read_user_input_character();
+
+        // Exit if user enters an sterisk '*'
+        if user_char == '*' {
+            break;
+        }
+
+        // Updated the 'revealed' state of each letter if the user has guess a correct letter, at least one revelead is changed to true
+        let mut at_least_one_revealed = false;
+        for letter in letters.iter_mut() {
+            if letter.character == user_char {
+                letter.revealed = true;
+                at_least_one_revealed = true;
+            }
+        }
+
+        // If they have guess incorrectly lose a turn
+        if !at_least_one_revealed {
+            turns_left -= 1;
+        }
+
+    }
+
+    
     println!("Selected word was {}", selected_word);
 }
 
@@ -67,4 +100,19 @@ fn display_progress(letters: &Vec<Letter>) {
     }
 
     println!("{}", display_string)
+}
+
+fn read_user_input_character() -> char {
+    let mut user_input = String::new();
+
+    // get user input
+    match io::stdin().read_line(&mut user_input) {
+        Ok(_) => {
+            match user_input.chars().next() {
+                Some(c) => { return c; }
+                None => { return '*'; }
+            }
+        }
+        Err(_) => { return '*'; }
+    }
 }
