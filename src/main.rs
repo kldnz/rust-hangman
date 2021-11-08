@@ -1,9 +1,8 @@
-extern crate rand;
 extern crate reqwest;
 
 use std::io;
 
-const ALLOWED_ATTEMPTS: u8 = 10;
+const ALLOWED_ATTEMPTS: u8 = 15;
 
 struct Letter {
     character: char,
