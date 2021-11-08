@@ -13,6 +13,12 @@ struct Letter {
     revealed: bool
 }
 
+enum GameProgress {
+    InProgress,
+    Won,
+    Lost
+}
+
 fn main() {
     let mut turns_left = ALLOWED_ATTEMPTS;
     let selected_word = select_word();
@@ -42,6 +48,19 @@ fn main() {
         // If they have guess incorrectly lose a turn
         if !at_least_one_revealed {
             turns_left -= 1;
+        }
+
+        // Check game progress
+        match check_progress(turns_left, &letters) {
+            GameProgress::InProgress => continue,
+            GameProgress::Won => {
+                println!("\nCongrats, you won! The word was {}", selected_word);
+                break;
+            }
+            GameProgress::Lost => {
+                println!("\nSorry, you lost ;(");
+                break;
+            }
         }
 
     }
@@ -115,4 +134,26 @@ fn read_user_input_character() -> char {
         }
         Err(_) => { return '*'; }
     }
+}
+
+fn check_progress(turns_left: u8, letters: &Vec<Letter>) -> GameProgress {
+    // Determine if all letters have been revealed
+    let mut all_revealed = true;
+    for letter in letters {
+        if !letter.revealed {
+            all_revealed = false;
+        }
+    }
+
+    if all_revealed {
+        return GameProgress::Won;
+    }
+
+    // If you have turns left and at least one is not revealed
+    if turns_left > 0 {
+        return GameProgress::InProgress;
+    }
+
+    return GameProgress::Lost;
+
 }
